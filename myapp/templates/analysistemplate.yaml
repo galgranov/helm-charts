@@ -25,6 +25,6 @@ spec:
               kube_pod_labels{
                 namespace="{{ .Release.Namespace }}",
                 label_app_kubernetes_io_name="{{ include "myapp.name" . }}",
-                label_pod_template_hash="{{`{{args.canary-hash}}`}}"
+                label_rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}"
               }
             )
