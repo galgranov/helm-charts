@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ include "myapp.fullname" . }}-http-check
+  labels:
+    {{- include "myapp.labels" . | nindent 4 }}
+spec:
+  args:
+    - name: service-name
+  metrics:
+    - name: http-success-rate
+      interval: 15s
+      count: 3
+      failureLimit: 1
+      provider:
+        job:
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: check
+                    image: curlimages/curl:8.6.0
+                    command:
+                      - sh
+                      - -c
+                      - |
+                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+                          http://{{`{{args.service-name}}`}}.{{ .Release.Namespace }}.svc.cluster.local/)
+                        echo "HTTP status: $STATUS"
+                        [ "$STATUS" = "200" ]

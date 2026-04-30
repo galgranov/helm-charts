@@ -80,7 +80,12 @@ spec:
     canary:
       steps:
         - setWeight: 20
-        - pause: { duration: 30s }
+        - analysis:
+            templates:
+              - templateName: {{ include "myapp.fullname" . }}-http-check
+            args:
+              - name: service-name
+                value: {{ include "myapp.fullname" . }}
         - setWeight: 50
         - pause: { duration: 30s }
         - setWeight: 100
