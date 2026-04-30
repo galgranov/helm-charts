@@ -84,8 +84,9 @@ spec:
             templates:
               - templateName: {{ include "myapp.fullname" . }}-http-check
             args:
-              - name: service-name
-                value: {{ include "myapp.fullname" . }}
+              - name: canary-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
         - setWeight: 50
         - pause: { duration: 30s }
         - setWeight: 100

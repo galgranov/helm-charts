@@ -150,6 +150,9 @@ volumeMounts: []
   #   mountPath: "/etc/foo"
   #   readOnly: true
 
+serviceMonitor:
+  enabled: true
+
 nodeSelector: {}
 
 tolerations: []

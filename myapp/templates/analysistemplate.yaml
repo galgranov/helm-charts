@@ -6,27 +6,25 @@ metadata:
     {{- include "myapp.labels" . | nindent 4 }}
 spec:
   args:
-    - name: service-name
+    - name: canary-hash
   metrics:
-    - name: http-success-rate
+    - name: pod-readiness
       interval: 15s
       count: 3
       failureLimit: 1
+      successCondition: result[0] >= 1
       provider:
-        job:
-          spec:
-            backoffLimit: 0
-            template:
-              spec:
-                restartPolicy: Never
-                containers:
-                  - name: check
-                    image: curlimages/curl:8.6.0
-                    command:
-                      - sh
-                      - -c
-                      - |
-                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-                          http://{{`{{args.service-name}}`}}.{{ .Release.Namespace }}.svc.cluster.local/)
-                        echo "HTTP status: $STATUS"
-                        [ "$STATUS" = "200" ]
+        prometheus:
+          address: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+          query: |
+            sum(
+              kube_pod_status_ready{
+                namespace="{{ .Release.Namespace }}",
+                condition="true"
+              } * on(pod) group_left()
+              kube_pod_labels{
+                namespace="{{ .Release.Namespace }}",
+                label_app_kubernetes_io_name="{{ include "myapp.name" . }}",
+                label_pod_template_hash="{{`{{args.canary-hash}}`}}"
+              }
+            )
