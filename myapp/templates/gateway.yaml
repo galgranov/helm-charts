@@ -1,0 +1,18 @@
+{{- if .Values.httpRoute.enabled -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ include "myapp.fullname" . }}-gateway
+  namespace: istio-system
+  labels:
+    {{- include "myapp.labels" . | nindent 4 }}
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
+{{- end }}

@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(/opt/homebrew/bin/helm template *)"
+      "Bash(/opt/homebrew/bin/helm template *)",
+      "Bash(/opt/homebrew/bin/helm repo *)",
+      "Bash(/opt/homebrew/bin/helm install *)",
+      "Bash(/opt/homebrew/bin/helm upgrade *)",
+      "Bash(curl -s 'http://localhost:9090/api/v1/query?query=kube_pod_labels%7Bnamespace%3D\"default\"%7D')",
+      "Bash(curl -s 'http://localhost:9090/api/v1/query?query=kube_pod_info%7Bnamespace%3D\"default\"%7D')",
+      "Bash(curl -s 'http://localhost:9090/api/v1/query?query=kube_pod_status_ready%7Bnamespace%3D\"default\"%7D')",
+      "Bash(curl -s 'http://localhost:9090/api/v1/query?query=kube_pod_labels%7Bnamespace%3D\"default\"%2Cpod%3D~\"myapp-.*\"%7D')",
+      "Bash(curl -s 'http://localhost:9090/api/v1/query?query=sum\\(kube_pod_status_ready%7Bnamespace%3D\"default\"%2Ccondition%3D\"true\"%7D*on\\(pod\\)group_left\\(\\)kube_pod_labels%7Bnamespace%3D\"default\"%2Clabel_app_kubernetes_io_name%3D\"myapp\"%7D\\)')"
     ]
   }
 }
